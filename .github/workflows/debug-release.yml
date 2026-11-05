@@ -1,0 +1,47 @@
+name: Debug release
+
+# Every push to main builds an ad hoc-signed debug app bundle and publishes it
+# as a GitHub prerelease tagged debug-<short sha>. Pull requests never run this.
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: debug-release
+  cancel-in-progress: false
+
+jobs:
+  build:
+    name: Build and publish
+    runs-on: macos-26
+    timeout-minutes: 45
+    permissions:
+      contents: write # create the prerelease
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: astral-sh/setup-uv@68559e99cc807c1eb7e9238fd43a15bba460eec2 # v10.3.3
+      - name: Test
+        run: uv run --extra dev pytest -q
+      - name: Build debug app
+        env:
+          TYPHOON_BUILD_CONFIG: debug
+        run: ./scripts/build-app.sh
+      - name: Package
+        run: |
+          short="${GITHUB_SHA::7}"
+          echo "TAG=debug-$short" >> "$GITHUB_ENV"
+          ditto -c -k --keepParent build/Typhoon.app "Typhoon-debug-$short.zip"
+          shasum -a 256 "Typhoon-debug-$short.zip" > "Typhoon-debug-$short.zip.sha256"
+      - name: Publish prerelease
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "$TAG" Typhoon-debug-*.zip Typhoon-debug-*.zip.sha256 \
+            --repo "$GITHUB_REPOSITORY" --target "$GITHUB_SHA" --prerelease \
+            --title "Debug build $TAG" \
+            --notes "Automated debug build of $GITHUB_SHA. Ad hoc signed and not notarized: macOS Gatekeeper will block it until you allow it in System Settings > Privacy & Security."
