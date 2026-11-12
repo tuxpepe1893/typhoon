@@ -231,7 +231,7 @@ wheels = [
 
 [[package]]
 name = "hap-python"
-version = "5.0.0"
+version = "5.2.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "chacha20poly1305-reuseable" },
@@ -240,9 +240,9 @@ dependencies = [
     { name = "orjson" },
     { name = "zeroconf" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/d2/c1/5eaf042f06183ea87976f525bc69c309f57b20dabf2787023464b88b0393/hap_python-5.0.0.tar.gz", hash = "sha256:455d3ac0721cc9cbb6373cf8c9422c3182db2d95c472f94d3a65cc94dda7434d", size = 290982, upload-time = "2025-08-25T12:11:59.945Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/d8/44/8bd51fb3e274d9843b4d67937e4fa754e4481f27b27cb907f891fbb31d11/hap_python-5.2.0.tar.gz", hash = "sha256:ede65dbd35ecb075e40483b57ff6f88bbb799a9dfb877dd4f9fcbe84511f57f3", size = 354661, upload-time = "2026-11-07T17:12:13.847Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/71/eb/57af891c844f80b193cc1da96e55ca14430e16739c12a7b48f21585f3d36/hap_python-5.0.0-py3-none-any.whl", hash = "sha256:c1ca3abc68adbfb0a4a50be3fff2399ab7ed7ac3d91f66f4e9d9d26037c04ed7", size = 264621, upload-time = "2025-08-25T12:11:58.668Z" },
+    { url = "https://files.pythonhosted.org/packages/e0/82/b9e2550463e79adb8f98da1bea1860cb759471fe174edf4509727915331f/hap_python-5.2.0-py3-none-any.whl", hash = "sha256:8dc6e44fda37faa807690c15c8616a6c57592c17339bbe011bdedc0a5b0bd21d", size = 302324, upload-time = "2026-11-07T17:12:12.406Z" },
 ]
 
 [package.optional-dependencies]
@@ -482,7 +482,7 @@ dev = [
 [package.metadata]
 requires-dist = [
     { name = "broadlink", specifier = "==0.19.0" },
-    { name = "hap-python", extras = ["qrcode"], specifier = "==5.0.0" },
+    { name = "hap-python", extras = ["qrcode"], specifier = "==5.2.0" },
     { name = "pyinstaller", marker = "extra == 'dev'", specifier = ">=6.16" },
     { name = "pytest", marker = "extra == 'dev'", specifier = ">=8" },
 ]
