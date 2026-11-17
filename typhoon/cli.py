@@ -241,6 +241,27 @@ def resolve_device(args):
     return DeviceIdentity(**values)
 
 
+def connected_controller(device, args, rediscover):
+    """Authenticate, following a saved device to its new address if DHCP moved it."""
+    controller = Controller(device, args.timeout)
+    try:
+        controller.connect()
+        return controller
+    except (broadlink_errors.NetworkTimeoutError, TimeoutError):
+        if not rediscover:
+            raise
+        # Nothing was sent to the device beyond authentication, so retrying is safe.
+        moved = next((found for found in discover(timeout=min(args.timeout, 3))
+                      if found.mac == device.mac and found.host != device.host), None)
+        if moved is None:
+            raise
+    device = DeviceIdentity(**{**device.to_dict(), "host": moved.host, "port": moved.port, "locked": moved.locked})
+    save_config(device)
+    controller = Controller(device, args.timeout)
+    controller.connect()
+    return controller
+
+
 def dispatch(args):
     if hasattr(args, "timeout") and not 0 < args.timeout <= 60:
         raise TyphoonError("Timeout must be greater than zero and at most 60 seconds.")
@@ -290,7 +311,7 @@ def dispatch(args):
                 return cloud_control(args, selected, changes)
         device = resolve_device(args)
         check_expected_device(args, "local:" + device.mac)
-        controller = Controller(device, args.timeout)
+        controller = connected_controller(device, args, rediscover=not explicit_local)
         if args.command == "status":
             return controller.status()
         return controller.set(changes)

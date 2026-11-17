@@ -99,7 +99,7 @@ def test_explicit_local_arguments_override_cloud_without_switching_selection(ser
     assert sign_in(monkeypatch, services) == 0
     assert cli.main(["cloud-select", "--id", "ac-one"]) == 0
     capsys.readouterr()
-    local = SimpleNamespace(status=lambda: {"state": {"power": False}, "verified": True})
+    local = SimpleNamespace(connect=lambda: None, status=lambda: {"state": {"power": False}, "verified": True})
     monkeypatch.setattr(cli, "Controller", lambda *_: local)
     assert cli.main(["status", "--host", "192.0.2.1", "--mac", "aa:bb:cc:dd:ee:ff"]) == 0
     assert json.loads(capsys.readouterr().out)["state"]["power"] is False
